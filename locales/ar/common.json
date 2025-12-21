@@ -55,7 +55,10 @@
     "loadMore": "تحميل المزيد",
     "loading": "جاري التحميل...",
     "downloadImage": "تحميل كصورة",
-    "duplicate": "تكرار"
+    "duplicate": "تكرار",
+    "downloadCurrency": "اختر العملة",
+    "downloadUSD": "تحميل بالدولار",
+    "downloadSYP": "تحميل بالليرة السورية (ل.س)"
   },
   "errors": {
     "title": "خطأ",

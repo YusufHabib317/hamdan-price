@@ -18,6 +18,7 @@ interface DownloadAllTablesImageOptions {
   isRTL: boolean;
   snapshotTitle?: string;
   logoUrl?: string;
+  currency?: 'USD' | 'SYP';
 }
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
@@ -25,7 +26,7 @@ export async function downloadAllTablesAsImage(
   options: DownloadAllTablesImageOptions,
 ): Promise<void> {
   const {
-    tables, date, isRTL, snapshotTitle, logoUrl = '/logo/logo.png',
+    tables, date, isRTL, snapshotTitle, logoUrl = '/logo/logo.png', currency = 'SYP',
   } = options;
 
   const container = document.createElement('div');
@@ -56,7 +57,7 @@ export async function downloadAllTablesAsImage(
                   • ${entry.name}
                 </td>
                 <td style="padding: 5px 10px; text-align: ${isRTL ? 'left' : 'right'}; font-size: 12px; color: #1a1a1a; font-weight: 600; white-space: nowrap;">
-                  ${entry.priceSyr.toLocaleString('en-US')} ل.س
+                  ${currency === 'USD' ? `$${entry.priceUsd.toFixed(2)}` : `${entry.priceSyr.toLocaleString('en-US')} ل.س`}
                 </td>
               </tr>
             `).join('')}

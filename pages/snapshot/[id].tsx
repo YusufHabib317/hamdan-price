@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import { useRouter } from 'next/router';
 import {
   Stack,
@@ -10,9 +11,10 @@ import {
   Paper,
   Text,
   Badge,
+  Menu,
 } from '@mantine/core';
 import {
-  IconAlertCircle, IconArrowLeft, IconCurrencyDollar, IconDownload,
+  IconAlertCircle, IconArrowLeft, IconCurrencyDollar, IconDownload, IconChevronDown, IconCoins,
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import useTranslation from 'next-translate/useTranslation';
@@ -49,7 +51,7 @@ export default function SnapshotViewPage() {
     router.push('/');
   };
 
-  const handleDownloadAllTables = async () => {
+  const handleDownloadAllTables = async (currency: 'USD' | 'SYP') => {
     if (!snapshot) return;
 
     const tables = snapshot.tables.map((table) => ({
@@ -66,6 +68,7 @@ export default function SnapshotViewPage() {
       date: formatDate(snapshot.createdAt),
       isRTL,
       snapshotTitle: snapshot.title || 'price-snapshot',
+      currency,
     });
   };
 
@@ -100,13 +103,33 @@ export default function SnapshotViewPage() {
           >
             {t('actions.backToHistory') || 'Back to History'}
           </Button>
-          <Button
-            leftSection={<IconDownload size={16} />}
-            variant="filled"
-            onClick={handleDownloadAllTables}
-          >
-            {t('actions.downloadImage') || 'Download as Image'}
-          </Button>
+          <Menu shadow="md" width={200}>
+            <Menu.Target>
+              <Button
+                leftSection={<IconDownload size={16} />}
+                rightSection={<IconChevronDown size={16} />}
+                variant="filled"
+              >
+                {t('actions.downloadImage') || 'Download as Image'}
+              </Button>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Label>{t('actions.downloadCurrency') || 'Select Currency'}</Menu.Label>
+              <Menu.Item
+                leftSection={<IconCurrencyDollar size={16} />}
+                onClick={() => handleDownloadAllTables('USD')}
+              >
+                {t('actions.downloadUSD') || 'Download in USD'}
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<IconCoins size={16} />}
+                onClick={() => handleDownloadAllTables('SYP')}
+              >
+                {t('actions.downloadSYP') || 'Download in SYP (ل.س)'}
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </Group>
 
         <Paper shadow="xs" p="md" withBorder>

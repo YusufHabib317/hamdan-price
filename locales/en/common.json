@@ -55,7 +55,10 @@
     "loadMore": "Load More",
     "loading": "Loading...",
     "downloadImage": "Download as Image",
-    "duplicate": "Duplicate"
+    "duplicate": "Duplicate",
+    "downloadCurrency": "Select Currency",
+    "downloadUSD": "Download in USD",
+    "downloadSYP": "Download in SYP (ل.س)"
   },
   "errors": {
     "title": "Error",
