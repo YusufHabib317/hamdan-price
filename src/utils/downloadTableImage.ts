@@ -84,26 +84,26 @@ export async function downloadAllTablesAsImage(
 
     const html = `
       <div style="padding: 0; position: relative; min-height: 100%;">
+        <!-- Logo in top corner -->
+        <div style="position: absolute; top: 5px; ${isRTL ? 'left' : 'right'}: 20px; z-index: 10;">
+          <img src="${logoUrl}" alt="" style="width: 50px; height: auto; opacity: 0.9;" />
+        </div>
+
         <!-- Header -->
         <div style="background: linear-gradient(180deg, #f5a623 0%, #e8920d 100%); padding: 14px 20px;">
           <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: white; text-align: center; font-family: 'Cairo', sans-serif; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
             مركز الحمدان للإتصالات - فرع شين
           </h1>
           <div style="margin-top: 8px; text-align: center;">
-            <span style="font-size: 18px; font-weight: 600; color: white; font-family: 'Inter', sans-serif; letter-spacing: 2px;">
+            <span style="font-size: 18px; font-weight: 600; color: white; font-family: 'Inter', sans-serif; letter-spacing: 2px; direction: ltr; display: inline-block;">
               0945 555 647
             </span>
           </div>
         </div>
 
-        <!-- Tables Container with Logo Background -->
+        <!-- Tables Container -->
         <div style="padding: 15px; position: relative;">
-          <!-- Logo Watermark - centered and sized relative to content -->
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 0;">
-            <img src="${logoUrl}" alt="" style="width: 55%; max-width: 450px; height: auto; opacity: 0.18;" />
-          </div>
-          
-          <!-- Tables (above watermark) -->
+          <!-- Tables -->
           <div style="position: relative; z-index: 1;">
             ${tableRows.join('')}
           </div>
