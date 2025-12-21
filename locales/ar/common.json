@@ -1,0 +1,68 @@
+{
+  "auth": {
+    "signIn": "تسجيل الدخول",
+    "signOut": "تسجيل الخروج",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+    "signingIn": "جاري تسجيل الدخول...",
+    "welcomeBack": "مرحباً بعودتك",
+    "enterCredentials": "أدخل بياناتك للوصول إلى حسابك"
+  },
+  "header": {
+    "title": "حمدان تل"
+  },
+  "exchangeRate": {
+    "label": "1 $ =",
+    "suffix": "ل.س",
+    "rate": "السعر"
+  },
+  "pricingTable": {
+    "defaultTitle": "جدول جديد",
+    "addRow": "إضافة صف",
+    "deleteTable": "حذف الجدول",
+    "deviceName": "اسم الجهاز",
+    "priceUsd": "السعر (دولار)",
+    "priceSyr": "السعر (ل.س)",
+    "title": "جداول الأسعار",
+    "addNewItem": "إضافة عنصر جديد",
+    "noTablesYet": "لا توجد جداول بعد. انقر على \"إضافة جدول\" للبدء.",
+    "tables": "الجداول",
+    "table": "جدول",
+    "entry": "إدخال",
+    "entries": "إدخالات"
+  },
+  "tableHistory": {
+    "title": "سجل الجداول",
+    "createdAt": "تاريخ الإنشاء",
+    "updatedAt": "تاريخ التحديث",
+    "noTables": "لا توجد جداول",
+    "untitled": "عنصر بدون عنوان",
+    "noSnapshots": "لا توجد عناصر محفوظة بعد. أنشئ عنصرك الأول!",
+    "showingItems": "عرض {{showing}} من {{total}} عنصر"
+  },
+  "actions": {
+    "addTable": "إضافة جدول",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "backToMain": "العودة للرئيسية",
+    "addNewItem": "إضافة عنصر جديد",
+    "backToHistory": "العودة للسجل",
+    "saveSuccess": "نجح",
+    "itemSaved": "تم حفظ العنصر بنجاح! يمكنك عرضه في صفحة السجل.",
+    "saveItem": "حفظ العنصر",
+    "loadMore": "تحميل المزيد",
+    "loading": "جاري التحميل...",
+    "downloadImage": "تحميل كصورة",
+    "duplicate": "تكرار"
+  },
+  "errors": {
+    "title": "خطأ",
+    "loadFailed": "فشل تحميل البيانات. يرجى المحاولة مرة أخرى."
+  },
+  "meta": {
+    "title": "حمدان تل - أسعار الأجهزة",
+    "description": "نظام إدارة أسعار الأجهزة"
+  }
+}

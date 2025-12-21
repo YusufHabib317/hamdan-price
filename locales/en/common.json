@@ -1,0 +1,68 @@
+{
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "invalidCredentials": "Invalid email or password",
+    "signingIn": "Signing in...",
+    "welcomeBack": "Welcome back",
+    "enterCredentials": "Enter your credentials to access your account"
+  },
+  "header": {
+    "title": "HAMDAN TEL"
+  },
+  "exchangeRate": {
+    "label": "1 $ =",
+    "suffix": "SYR",
+    "rate": "Rate"
+  },
+  "pricingTable": {
+    "defaultTitle": "New Table",
+    "addRow": "Add Row",
+    "deleteTable": "Delete Table",
+    "deviceName": "Device Name",
+    "priceUsd": "Price (USD)",
+    "priceSyr": "Price (SYR)",
+    "title": "Pricing Tables",
+    "addNewItem": "Add New Item",
+    "noTablesYet": "No tables yet. Click \"Add Table\" to get started.",
+    "tables": "Tables",
+    "table": "table",
+    "entry": "entry",
+    "entries": "entries"
+  },
+  "tableHistory": {
+    "title": "Table History",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "noTables": "No tables found",
+    "untitled": "Untitled Item",
+    "noSnapshots": "No items saved yet. Create your first item!",
+    "showingItems": "Showing {{showing}} of {{total}} items"
+  },
+  "actions": {
+    "addTable": "Add Table",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "backToMain": "Back to Main",
+    "addNewItem": "Add New Item",
+    "backToHistory": "Back to History",
+    "saveSuccess": "Success",
+    "itemSaved": "Item saved successfully! You can view it in the history page.",
+    "saveItem": "Save Item",
+    "loadMore": "Load More",
+    "loading": "Loading...",
+    "downloadImage": "Download as Image",
+    "duplicate": "Duplicate"
+  },
+  "errors": {
+    "title": "Error",
+    "loadFailed": "Failed to load data. Please try again."
+  },
+  "meta": {
+    "title": "HAMDAN TEL - Device Pricing",
+    "description": "Device pricing management system"
+  }
+}
