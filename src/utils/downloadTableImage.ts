@@ -55,8 +55,8 @@ export async function downloadAllTablesAsImage(
                 <td style="padding: 5px 10px; text-align: ${isRTL ? 'right' : 'left'}; font-size: 12px; color: #1a1a1a; font-weight: 500;">
                   • ${entry.name}
                 </td>
-                <td style="padding: 5px 10px; text-align: ${isRTL ? 'left' : 'right'}; font-size: 12px; color: #1a1a1a; font-weight: 600; text-decoration: underline; white-space: nowrap;">
-                  ${entry.priceUsd.toFixed(0)} $
+                <td style="padding: 5px 10px; text-align: ${isRTL ? 'left' : 'right'}; font-size: 12px; color: #1a1a1a; font-weight: 600; white-space: nowrap;">
+                  ${entry.priceSyr.toLocaleString('en-US')} ل.س
                 </td>
               </tr>
             `).join('')}
