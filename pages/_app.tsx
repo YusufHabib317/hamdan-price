@@ -65,7 +65,8 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 }
 
 export default function App({ Component, pageProps }: AppProps) {
-  const { locale } = useRouter();
+  const router = useRouter();
+  const { locale } = router;
   const { t } = useTranslation('common');
   const dir = RTL_LOCALES.includes(locale || 'en') ? 'rtl' : 'ltr';
 
@@ -78,6 +79,18 @@ export default function App({ Component, pageProps }: AppProps) {
     defaultValue: systemColorScheme,
     getInitialValueInEffect: true,
   });
+
+  // Restore saved locale from cookie
+  useEffect(() => {
+    const cookies = document.cookie.split('; ');
+    const localeCookie = cookies.find((c) => c.startsWith('locale='));
+    const savedLocale = localeCookie?.split('=')[1];
+
+    if (savedLocale && savedLocale !== locale) {
+      router.push(router.pathname, router.asPath, { locale: savedLocale });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

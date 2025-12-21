@@ -19,6 +19,7 @@ export function Header({ logoSrc = '' }: HeaderProps) {
 
   const toggleLanguage = () => {
     const newLang = lang === 'en' ? 'ar' : 'en';
+    document.cookie = `locale=${newLang}; path=/; max-age=31536000`;
     const { pathname, asPath, query } = router;
     router.push({ pathname, query }, asPath, { locale: newLang });
   };
