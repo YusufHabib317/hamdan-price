@@ -18,11 +18,24 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import useTranslation from 'next-translate/useTranslation';
+import { useState, useEffect, useCallback } from 'react';
 import { AppShell } from '@/components/layout';
 import { PricingTableReadOnly } from '@/components/pricing';
 import { getSnapshotQuery } from '@/components/store/snapshots';
 import { downloadAllTablesAsImage } from '@/utils/downloadTableImage';
 import { usdToSyr } from '@/utils/currency';
+
+interface DeviceEntry {
+  name: string;
+  priceUsd: number;
+  order: number;
+}
+
+interface SortedTable {
+  id: string;
+  title: string;
+  entries: DeviceEntry[];
+}
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -47,14 +60,36 @@ export default function SnapshotViewPage() {
     error,
   } = useQuery(getSnapshotQuery({ id: id as string }));
 
+  // State to track sorted tables (user's custom sorting)
+  const [sortedTables, setSortedTables] = useState<SortedTable[]>([]);
+
+  // Initialize sorted tables when snapshot loads
+  useEffect(() => {
+    if (snapshot?.tables) {
+      setSortedTables(snapshot.tables.map((table) => ({
+        id: table.id,
+        title: table.title,
+        entries: table.entries,
+      })));
+    }
+  }, [snapshot]);
+
   const handleBack = () => {
     router.push('/');
   };
 
+  // Handler to update a specific table's entries when user reorders
+  const handleTableReorder = useCallback((tableId: string) => (newEntries: DeviceEntry[]) => {
+    setSortedTables((prevTables) => prevTables.map((table) => (table.id === tableId
+      ? { ...table, entries: newEntries }
+      : table)));
+  }, []);
+
   const handleDownloadAllTables = async (currency: 'USD' | 'SYP') => {
     if (!snapshot) return;
 
-    const tables = snapshot.tables.map((table) => ({
+    // Use sortedTables instead of snapshot.tables to reflect user's custom sorting
+    const tables = sortedTables.map((table) => ({
       title: table.title,
       entries: table.entries.map((entry) => ({
         name: entry.name,
@@ -170,7 +205,7 @@ export default function SnapshotViewPage() {
         <Title order={3}>{t('pricingTable.tables') || 'Tables'}</Title>
 
         <Stack gap="md">
-          {snapshot.tables.map((table) => (
+          {sortedTables.map((table) => (
             <PricingTableReadOnly
               key={table.id}
               table={{
@@ -179,6 +214,7 @@ export default function SnapshotViewPage() {
                 entries: table.entries,
               }}
               exchangeRate={snapshot.rate}
+              onReorderEntries={handleTableReorder(table.id)}
             />
           ))}
         </Stack>

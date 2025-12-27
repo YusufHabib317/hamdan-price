@@ -189,6 +189,22 @@ export default function IndexPage() {
     [],
   );
 
+  const handleReorderEntries = useCallback(
+    (tableId: string) => (newOrder: LocalEntry[]) => {
+      setLocalState((prev) => ({
+        ...prev,
+        tables: prev.tables.map((table) => (table.id === tableId
+          ? {
+            ...table,
+            entries: newOrder,
+          }
+          : table)),
+      }));
+      setSaveSuccess(false);
+    },
+    [],
+  );
+
   // Save as new snapshot
   const handleSave = useCallback(async () => {
     try {
@@ -301,6 +317,7 @@ export default function IndexPage() {
                 onDeleteRow={(entryIndex: number) => handleDeleteRow(table.id, entryIndex)}
                 onEntryChange={(entryIndex: number, field: 'name' | 'priceUsd', value: string | number) => handleEntryChange(table.id, entryIndex, field, value)}
                 onDeleteTable={handleDeleteTable(table.id)}
+                onReorderEntries={handleReorderEntries(table.id)}
               />
             ))}
           </SimpleGrid>

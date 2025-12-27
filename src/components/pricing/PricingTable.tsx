@@ -14,7 +14,23 @@ import {
 } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import useTranslation from 'next-translate/useTranslation';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { DeviceEntryRow } from './DeviceEntryRow';
+import { SortableRow, SortableCard } from './SortableComponents';
 
 export interface DeviceEntry {
   name: string;
@@ -36,18 +52,19 @@ export interface PricingTableProps {
   onDeleteRow: (entryIndex: number) => void;
   onEntryChange: (entryIndex: number, field: 'name' | 'priceUsd', value: string | number) => void;
   onDeleteTable: () => void;
+  onReorderEntries?: (newOrder: DeviceEntry[]) => void;
 }
 
-export function PricingTable(props: PricingTableProps) {
-  const {
-    table,
-    exchangeRate,
-    onTitleChange,
-    onAddRow,
-    onDeleteRow,
-    onEntryChange,
-    onDeleteTable,
-  } = props;
+export function PricingTable({
+  table,
+  exchangeRate,
+  onTitleChange,
+  onAddRow,
+  onDeleteRow,
+  onEntryChange,
+  onDeleteTable,
+  onReorderEntries = undefined,
+}: PricingTableProps) {
   const { t, lang } = useTranslation('common');
   const isRTL = lang === 'ar';
 
@@ -58,6 +75,13 @@ export function PricingTable(props: PricingTableProps) {
     base: true,
     sm: false,
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   // Sync local state when prop changes
   useEffect(() => {
@@ -87,6 +111,29 @@ export function PricingTable(props: PricingTableProps) {
     [onDeleteRow],
   );
 
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+
+      if (over && active.id !== over.id) {
+        const oldIndex = table.entries.findIndex((entry, idx) => `${table.id}-${idx}` === active.id);
+        const newIndex = table.entries.findIndex((entry, idx) => `${table.id}-${idx}` === over.id);
+
+        if (oldIndex !== -1 && newIndex !== -1) {
+          const newOrder = arrayMove(table.entries, oldIndex, newIndex).map((entry, idx) => ({
+            ...entry,
+            order: idx,
+          }));
+
+          if (onReorderEntries) {
+            onReorderEntries(newOrder);
+          }
+        }
+      }
+    },
+    [table.entries, table.id, onReorderEntries],
+  );
+
   return (
     <Paper shadow="sm" p="md" withBorder>
       <Stack gap="md">
@@ -110,99 +157,118 @@ export function PricingTable(props: PricingTableProps) {
           </ActionIcon>
         </Group>
 
-        {isMobile ? (
-          // Mobile Card Layout
-          <Stack gap="sm">
-            {table.entries.map((entry, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Paper key={`${table.id}-${index}`} p="sm" withBorder>
-                <Stack gap="xs">
-                  <Group justify="space-between" align="flex-start">
-                    <Box style={{ flex: 1 }}>
-                      <Text size="xs" c="dimmed" mb={4}>
-                        {t('pricingTable.deviceName')}
-                      </Text>
-                      <TextInput
-                        value={entry.name}
-                        onChange={(e) => handleEntryFieldChange(index)('name', e.target.value)}
-                        placeholder={t('pricingTable.deviceName')}
-                        style={{ textAlign: isRTL ? 'right' : 'left' }}
-                      />
-                    </Box>
-                    <ActionIcon
-                      color="red"
-                      variant="subtle"
-                      onClick={handleDeleteEntry(index)}
-                      aria-label={t('actions.delete')}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={table.entries.map((_, idx) => `${table.id}-${idx}`)}
+            strategy={verticalListSortingStrategy}
+          >
+            {isMobile ? (
+              // Mobile Card Layout
+              <Stack gap="sm">
+                {table.entries.map((entry, index) => (
+                  <SortableCard
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`${table.id}-${index}`}
+                    id={`${table.id}-${index}`}
+                  >
+                    <Stack gap="xs">
+                      <Group justify="space-between" align="flex-start">
+                        <Box style={{ flex: 1 }}>
+                          <Text size="xs" c="dimmed" mb={4}>
+                            {t('pricingTable.deviceName')}
+                          </Text>
+                          <TextInput
+                            value={entry.name}
+                            onChange={(e) => handleEntryFieldChange(index)('name', e.target.value)}
+                            placeholder={t('pricingTable.deviceName')}
+                            style={{ textAlign: isRTL ? 'right' : 'left' }}
+                          />
+                        </Box>
+                        <ActionIcon
+                          color="red"
+                          variant="subtle"
+                          onClick={handleDeleteEntry(index)}
+                          aria-label={t('actions.delete')}
+                        >
+                          <IconTrash size={18} />
+                        </ActionIcon>
+                      </Group>
+                      <Group grow>
+                        <Box>
+                          <Text size="xs" c="dimmed" mb={4}>
+                            {t('pricingTable.priceUsd')}
+                          </Text>
+                          <TextInput
+                            type="number"
+                            value={entry.priceUsd}
+                            onChange={(e) => handleEntryFieldChange(index)('priceUsd', parseFloat(e.target.value) || 0)}
+                            placeholder="0.00"
+                            style={{ textAlign: isRTL ? 'right' : 'left' }}
+                          />
+                        </Box>
+                        <Box>
+                          <Text size="xs" c="dimmed" mb={4}>
+                            {t('pricingTable.priceSyr')}
+                          </Text>
+                          <TextInput
+                            value={(entry.priceUsd * exchangeRate).toLocaleString('en-US', {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
+                            readOnly
+                            style={{
+                              textAlign: isRTL ? 'right' : 'left',
+                              backgroundColor: 'var(--mantine-color-gray-0)',
+                            }}
+                          />
+                        </Box>
+                      </Group>
+                    </Stack>
+                  </SortableCard>
+                ))}
+              </Stack>
+            ) : (
+              // Desktop Table Layout
+              <Table striped highlightOnHover>
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th style={{ width: 40 }} />
+                    <Table.Th style={{ textAlign: isRTL ? 'right' : 'left', minWidth: 180 }}>
+                      {t('pricingTable.deviceName')}
+                    </Table.Th>
+                    <Table.Th style={{ textAlign: isRTL ? 'right' : 'left', minWidth: 140 }}>
+                      {t('pricingTable.priceUsd')}
+                    </Table.Th>
+                    <Table.Th style={{ textAlign: isRTL ? 'right' : 'left', minWidth: 140 }}>
+                      {t('pricingTable.priceSyr')}
+                    </Table.Th>
+                    <Table.Th style={{ width: 50, textAlign: 'center' }} />
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {table.entries.map((entry, index) => (
+                    <SortableRow
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={`${table.id}-${index}`}
+                      id={`${table.id}-${index}`}
                     >
-                      <IconTrash size={18} />
-                    </ActionIcon>
-                  </Group>
-                  <Group grow>
-                    <Box>
-                      <Text size="xs" c="dimmed" mb={4}>
-                        {t('pricingTable.priceUsd')}
-                      </Text>
-                      <TextInput
-                        type="number"
-                        value={entry.priceUsd}
-                        onChange={(e) => handleEntryFieldChange(index)('priceUsd', parseFloat(e.target.value) || 0)}
-                        placeholder="0.00"
-                        style={{ textAlign: isRTL ? 'right' : 'left' }}
+                      <DeviceEntryRow
+                        entry={entry}
+                        exchangeRate={exchangeRate}
+                        onFieldChange={handleEntryFieldChange(index)}
+                        onDelete={handleDeleteEntry(index)}
                       />
-                    </Box>
-                    <Box>
-                      <Text size="xs" c="dimmed" mb={4}>
-                        {t('pricingTable.priceSyr')}
-                      </Text>
-                      <TextInput
-                        value={(entry.priceUsd * exchangeRate).toLocaleString('en-US', {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                        readOnly
-                        style={{
-                          textAlign: isRTL ? 'right' : 'left',
-                          backgroundColor: 'var(--mantine-color-gray-0)',
-                        }}
-                      />
-                    </Box>
-                  </Group>
-                </Stack>
-              </Paper>
-            ))}
-          </Stack>
-        ) : (
-          // Desktop Table Layout
-          <Table striped highlightOnHover>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th style={{ textAlign: isRTL ? 'right' : 'left', minWidth: 180 }}>
-                  {t('pricingTable.deviceName')}
-                </Table.Th>
-                <Table.Th style={{ textAlign: isRTL ? 'right' : 'left', minWidth: 140 }}>
-                  {t('pricingTable.priceUsd')}
-                </Table.Th>
-                <Table.Th style={{ textAlign: isRTL ? 'right' : 'left', minWidth: 140 }}>
-                  {t('pricingTable.priceSyr')}
-                </Table.Th>
-                <Table.Th style={{ width: 50, textAlign: 'center' }} />
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {table.entries.map((entry, index) => (
-                <DeviceEntryRow
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`${table.id}-${index}`}
-                  entry={entry}
-                  exchangeRate={exchangeRate}
-                  onFieldChange={handleEntryFieldChange(index)}
-                  onDelete={handleDeleteEntry(index)}
-                />
-              ))}
-            </Table.Tbody>
-          </Table>
-        )}
+                    </SortableRow>
+                  ))}
+                </Table.Tbody>
+              </Table>
+            )}
+          </SortableContext>
+        </DndContext>
 
         <Button
           leftSection={<IconPlus size={16} />}

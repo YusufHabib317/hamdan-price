@@ -68,7 +68,7 @@ export function DeviceEntryRow(props: DeviceEntryRowProps) {
   );
 
   return (
-    <Table.Tr>
+    <>
       <Table.Td style={{ textAlign: isRTL ? 'right' : 'left', minWidth: 180 }}>
         <TextInput
           value={localName}
@@ -115,7 +115,7 @@ export function DeviceEntryRow(props: DeviceEntryRowProps) {
           <IconTrash size={18} />
         </ActionIcon>
       </Table.Td>
-    </Table.Tr>
+    </>
   );
 }
 
