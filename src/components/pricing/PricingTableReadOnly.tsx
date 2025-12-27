@@ -110,7 +110,11 @@ export function PricingTableReadOnly({
   const entries = onReorderEntries ? table.entries : localEntries;
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require 8px movement before drag starts (fixes mobile touch issues)
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),

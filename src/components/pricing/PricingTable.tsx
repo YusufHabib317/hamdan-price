@@ -77,7 +77,11 @@ export function PricingTable({
   });
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require 8px movement before drag starts (fixes mobile touch issues)
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -116,8 +120,8 @@ export function PricingTable({
       const { active, over } = event;
 
       if (over && active.id !== over.id) {
-        const oldIndex = table.entries.findIndex((entry, idx) => `${table.id}-${idx}` === active.id);
-        const newIndex = table.entries.findIndex((entry, idx) => `${table.id}-${idx}` === over.id);
+        const oldIndex = table.entries.findIndex((_, idx) => `${table.id}-${idx}` === active.id);
+        const newIndex = table.entries.findIndex((_, idx) => `${table.id}-${idx}` === over.id);
 
         if (oldIndex !== -1 && newIndex !== -1) {
           const newOrder = arrayMove(table.entries, oldIndex, newIndex).map((entry, idx) => ({
