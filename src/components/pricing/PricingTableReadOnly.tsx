@@ -10,7 +10,8 @@ import {
   DndContext,
   closestCenter,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragEndEvent,
@@ -74,8 +75,27 @@ function SortableReadOnlyRow({
 
   return (
     <Table.Tr ref={setNodeRef} style={style}>
-      <Table.Td style={{ width: 40, cursor: 'grab' }} {...attributes} {...listeners}>
-        <IconGripVertical size={18} style={{ display: 'block' }} />
+      <Table.Td
+        style={{
+          width: 44,
+          cursor: 'grab',
+          touchAction: 'none',
+          padding: 0,
+        }}
+        {...attributes}
+        {...listeners}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 44,
+            height: 44,
+          }}
+        >
+          <IconGripVertical size={20} />
+        </div>
       </Table.Td>
       <Table.Td style={{ textAlign: isRTL ? 'right' : 'left' }}>
         <Text>{entry.name || '-'}</Text>
@@ -110,9 +130,15 @@ export function PricingTableReadOnly({
   const entries = onReorderEntries ? table.entries : localEntries;
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
       activationConstraint: {
-        distance: 8, // Require 8px movement before drag starts (fixes mobile touch issues)
+        distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 8,
       },
     }),
     useSensor(KeyboardSensor, {

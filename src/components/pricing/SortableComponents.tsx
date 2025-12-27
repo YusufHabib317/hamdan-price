@@ -28,8 +28,27 @@ export function SortableRow({ id, children }: SortableRowProps) {
 
   return (
     <Table.Tr ref={setNodeRef} style={style}>
-      <Table.Td style={{ width: 40, cursor: 'grab' }} {...attributes} {...listeners}>
-        <IconGripVertical size={18} style={{ display: 'block' }} />
+      <Table.Td
+        style={{
+          width: 44,
+          cursor: 'grab',
+          touchAction: 'none',
+        }}
+        {...attributes}
+        {...listeners}
+      >
+        <Box
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 44,
+            height: 44,
+            margin: -8,
+          }}
+        >
+          <IconGripVertical size={20} />
+        </Box>
       </Table.Td>
       {children}
     </Table.Tr>
@@ -52,17 +71,31 @@ export function SortableCard({ id, children }: SortableCardProps) {
     isDragging,
   } = useSortable({ id });
 
-  const style = {
+  const cardStyle = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
 
+  // Large touch-friendly drag handle style (minimum 44x44px for mobile)
+  const dragHandleStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 44,
+    minHeight: 44,
+    cursor: 'grab',
+    touchAction: 'none',
+    backgroundColor: isDragging ? 'var(--mantine-color-blue-1)' : 'var(--mantine-color-gray-1)',
+    borderRadius: 'var(--mantine-radius-sm)',
+    transition: 'background-color 0.2s ease',
+  };
+
   return (
-    <Paper ref={setNodeRef} style={style} p="sm" withBorder>
-      <Group gap="xs" wrap="nowrap">
-        <Box {...attributes} {...listeners} style={{ cursor: 'grab', display: 'flex', alignItems: 'flex-start' }}>
-          <IconGripVertical size={20} />
+    <Paper ref={setNodeRef} style={cardStyle} p="sm" withBorder>
+      <Group gap="sm" wrap="nowrap" align="stretch">
+        <Box style={dragHandleStyle} {...attributes} {...listeners}>
+          <IconGripVertical size={24} />
         </Box>
         <Box style={{ flex: 1 }}>
           {children}
